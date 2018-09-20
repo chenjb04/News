@@ -1,6 +1,4 @@
 # -*- coding:utf-8 -*-
-from logging.handlers import RotatingFileHandler
-
 __author__ = 'ChenJiaBao'
 __date__ = '2018/9/20 13:48'
 from flask import Flask
@@ -10,6 +8,8 @@ from redis import StrictRedis
 from flask_wtf import CSRFProtect
 from flask_session import Session
 import logging
+from logging.handlers import RotatingFileHandler
+from info.modules.index import index_blu
 
 db = SQLAlchemy()
 
@@ -48,4 +48,7 @@ def create_app(config_name):
 
     # 设置session保存位置
     Session(app)
+
+    # 注册蓝图
+    app.register_blueprint(index_blu)
     return app
