@@ -1,9 +1,8 @@
 # -*- coding:utf-8 -*-
-import logging
-
 __author__ = 'ChenJiaBao'
 __date__ = '2018/9/20 13:43'
 from redis import StrictRedis
+import logging
 
 
 class Config(object):

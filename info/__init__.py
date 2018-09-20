@@ -9,9 +9,9 @@ from flask_wtf import CSRFProtect
 from flask_session import Session
 import logging
 from logging.handlers import RotatingFileHandler
-from info.modules.index import index_blu
 
 db = SQLAlchemy()
+redis_store = None  # type:StrictRedis
 
 
 def setup_log(congfig_name):
@@ -39,6 +39,7 @@ def create_app(config_name):
     db.init_app(app)
 
     # 初始化redis存储对象
+    global redis_store
     redis_store = StrictRedis(host=config[config_name].REDIS_HOST,
                               port=config[config_name].REDIS_PORT,
                               password=config[config_name].REDIS_PASSWORD)
@@ -50,5 +51,6 @@ def create_app(config_name):
     Session(app)
 
     # 注册蓝图
+    from info.modules.index import index_blu
     app.register_blueprint(index_blu)
     return app
