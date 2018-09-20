@@ -1,4 +1,6 @@
 # -*- coding:utf-8 -*-
+import logging
+
 __author__ = 'ChenJiaBao'
 __date__ = '2018/9/19 17:56'
 from flask import session
@@ -18,7 +20,10 @@ manager.add_command('db', MigrateCommand)
 
 @app.route('/')
 def index():
-    session['name'] = 'laowang'
+    # session['name'] = 'laowang'
+    logging.debug('测试debug')
+    logging.warning('测试warning')
+    logging.error('测试error')
     return 'index'
 
 

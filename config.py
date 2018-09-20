@@ -1,4 +1,6 @@
 # -*- coding:utf-8 -*-
+import logging
+
 __author__ = 'ChenJiaBao'
 __date__ = '2018/9/20 13:43'
 from redis import StrictRedis
@@ -21,6 +23,8 @@ class Config(object):
     PERMANENT_SESSION_LIFETIME = 86400 * 2  # 设置过期时间为两天
     SESSION_REDIS = StrictRedis(host=REDIS_HOST, port=REDIS_PORT, password=REDIS_PASSWORD)
 
+    LOG_LEVEL = logging.DEBUG
+
 
 class Development(Config):
     """开发环境下的配置"""
@@ -30,6 +34,7 @@ class Development(Config):
 class ProductionConfig(Config):
     """生产环境下的配置"""
     DEBUG = False
+    LOG_LEVEL = logging.WARNING
 
 
 class TestingConfig(Config):
