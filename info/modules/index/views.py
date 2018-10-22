@@ -1,12 +1,10 @@
 # -*- coding:utf-8 -*-
-from info import redis_store
-
 __author__ = 'ChenJiaBao'
 __date__ = '2018/9/20 15:02'
 from . import index_blu
+from flask import render_template
 
 
 @index_blu.route('/')
 def index():
-    redis_store.set('name', 'hahahhaha')
-    return 'index'
+    return render_template('news/index.html')
