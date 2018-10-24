@@ -38,7 +38,7 @@ class User(BaseModel, db.Model):
     last_login = db.Column(db.DateTime, default=datetime.now)  # 最后一次登录时间
     is_admin = db.Column(db.Boolean, default=False)
     signature = db.Column(db.String(512))  # 用户签名
-    gender = db.Column(  # 订单的状态
+    gender = db.Column(
         db.Enum(
             "MAN",  # 男
             "WOMAN"  # 女

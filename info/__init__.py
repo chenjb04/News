@@ -42,10 +42,11 @@ def create_app(config_name):
     global redis_store
     redis_store = StrictRedis(host=config[config_name].REDIS_HOST,
                               port=config[config_name].REDIS_PORT,
-                              password=config[config_name].REDIS_PASSWORD)
+                              password=config[config_name].REDIS_PASSWORD,
+                              decode_responses=True)
 
     # 开启csrf
-    CSRFProtect(app)
+    # CSRFProtect(app)
 
     # 设置session保存位置
     Session(app)
