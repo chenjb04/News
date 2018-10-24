@@ -3,7 +3,7 @@ __author__ = 'ChenJiaBao'
 __date__ = '2018/9/20 15:02'
 from . import index_blu
 from flask import render_template, current_app, session
-from info.models import User
+from info.models import User, News
 
 
 @index_blu.route('/')
@@ -22,7 +22,10 @@ def index():
     data = {
         'user': user.to_dict() if user else None
     }
-    return render_template('news/index.html', data=data)
+
+    # 右侧排行数据
+    news_list = News.query.order_by(News.clicks.desc()).limit(6)
+    return render_template('news/index.html', data=data, news_list=news_list)
 
 
 @index_blu.route('/favicon.ico')
