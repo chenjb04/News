@@ -2,7 +2,7 @@
 __author__ = 'ChenJiaBao'
 __date__ = '2018/10/22 13:52'
 from . import passport_blu
-from flask import request, abort, current_app, make_response, jsonify, session
+from flask import request, abort, current_app, make_response, jsonify, session, redirect, url_for
 from info import redis_store, db
 from info import constants
 from info.utils.captcha import captcha
@@ -136,5 +136,18 @@ def login():
     session['mobile'] = user.mobile
     session['nick_name'] = user.nick_name
     return jsonify(errno=RET.OK, errmsg='登录成功')
+
+
+@passport_blu.route('/logout')
+def logout():
+    """
+    退出
+    """
+    session.pop('user_id', None)
+    session.pop('mobile', None)
+    session.pop('nick_name', None)
+    return redirect(url_for('index.index'))
+
+
 
 
