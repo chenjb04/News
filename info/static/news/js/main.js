@@ -127,6 +127,9 @@ $(function(){
             url:"/passport/login",
             type:"post",
             contentType:"application/json",
+            headers:{
+                "X-CSRFToken":getCookie('csrf_token')
+            },
             data:JSON.stringify(params),
             success:function (resp) {
                 if (resp.errno=="0"){
@@ -180,6 +183,9 @@ $(function(){
             url:"/passport/register",
             type:"post",
             contentType:"application/json",
+            headers:{
+                "X-CSRFToken":getCookie('csrf_token')
+            },
             data:JSON.stringify(parmas),
             success:function (resp) {
                     if(resp.errno=="0"){
@@ -230,6 +236,9 @@ function sendSMSCode() {
     $.ajax({
         url:"/passport/sms_code",
         type:"post",
+        headers:{
+                "X-CSRFToken":getCookie('csrf_token')
+            },
         data:JSON.stringify(params),
         contentType:"application/json",
         success:function (resp) {
