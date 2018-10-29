@@ -2,25 +2,21 @@
 __author__ = 'ChenJiaBao'
 __date__ = '2018/9/20 15:02'
 from . import index_blu
-from flask import render_template, current_app, session, request, jsonify
+from flask import render_template, current_app, session, request, jsonify, g
 from info.models import User, News, Category
 from info import constants
 from info.utils.response_code import RET
+from info.utils.common import user_login_data
 
 
 @index_blu.route('/')
+@user_login_data
 def index():
     """
     首页
     :return:
     """
-    user_id = session.get('user_id', None)
-    user = None
-    if user_id:
-        try:
-            user = User.query.get(user_id)
-        except Exception as e:
-            current_app.logger.error(e)
+    user = g.user
     data = {
         'user': user.to_dict() if user else None
     }
