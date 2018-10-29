@@ -7,41 +7,52 @@
 {% endblock %}
 {% block content %}
     <div class="detail_con fl">
-            <h3>{{ news.title }}</h3>
-            <div class="detail_about clearfix">
-                <span class="time_souce fl">{{ news.create_time }} 来源: {{ news.source }}</span>
-                <span class="comment fr">0</span>
-            </div>
-
-            <p class="summary">
-                摘要：{{ news.digest }}
-            </p>
-
-            <h4>{{ news.title }}</h4>
-
-<p>
-{{ news.content|safe }}</p>
-
-
-        <a href="javascript:" class="collection block-center">收藏</a>
-        <a href="javascript:" class="collected block-center" style="display: none"><span class="out">已收藏</span><span class="over">取消收藏</span></a>
-
-
-        <div class="comment_form_logout">
-            登录发表你的评论
+        <h3>{{ news.title }}</h3>
+        <div class="detail_about clearfix">
+            <span class="time_souce fl">{{ news.create_time }} 来源: {{ news.source }}</span>
+            <span class="comment fr">{{ total_comment }}</span>
         </div>
 
-        <form action="" class="comment_form">
-            <div class="person_pic">
-                <img src="../../static/news/images/cat.jpg" alt="用户图标">
+        <p class="summary">
+            摘要：{{ news.digest }}
+        </p>
+
+        <h4>{{ news.title }}</h4>
+
+        <p>
+            {{ news.content|safe }}</p>
+
+     <a href="javascript:" class="collected block-center" data-newid="{{ news.id }}" style="display: {% if is_collected %} block
+    {% else %} none {% endif %};"><span class="out">已收藏</span><span class="over">取消收藏</span></a>
+    <a href="javascript:" class="collection block-center" data-newid="{{ news.id }}" style="display: {% if is_collected %} none
+            {% else %} block {% endif %};">收藏</a>
+
+
+
+        {% if data.user %}
+            <form action="" class="comment_form">
+                <div class="person_pic">
+
+                    <img src="{% if data.user.avatar_url %}
+                         {{ data.user.avatar_url }}
+                         {% else %}
+                         ../../static/news/images/person01.png"{% endif %}alt="用户图标">
+                </div>
+                <textarea placeholder="请发表您的评论" class="comment_input"></textarea>
+                <input type="submit" name="" value="评 论" class="comment_sub">
+            </form>
+        {% else %}
+            <div class="comment_form_logout">
+                登录发表你的评论
             </div>
-            <textarea placeholder="请发表您的评论" class="comment_input"></textarea>
-            <input type="submit" name="" value="评 论" class="comment_sub">
-        </form>
+        {% endif %}
+
+
+
 
 
         <div class="comment_count">
-            4条评论
+            {{ total_comment }}条评论
         </div>
 
         <div class="comment_list_con">
@@ -63,7 +74,7 @@
                 <a href="javascript:" class="comment_up has_comment_up fr">1</a>
                 <a href="javascript:" class="comment_reply fr">回复</a>
                 <from class="reply_form fl">
-                    <textarea  class="reply_input"></textarea>
+                    <textarea class="reply_input"></textarea>
                     <input type="submit" name="" value="回复" class="reply_sub fr">
                     <input type="reset" name="" value="取消" class="reply_cancel fr">
                 </from>
@@ -81,7 +92,7 @@
                 <a href="javascript:" class="comment_up fr">赞</a>
                 <a href="javascript:" class="comment_reply fr">回复</a>
                 <from class="reply_form fl">
-                    <textarea  class="reply_input"></textarea>
+                    <textarea class="reply_input"></textarea>
                     <input type="submit" name="" value="回复" class="reply_sub fr">
                     <input type="reset" name="" value="取消" class="reply_cancel fr">
                 </from>
@@ -99,7 +110,7 @@
                 <a href="javascript:" class="comment_up fr">赞</a>
                 <a href="javascript:" class="comment_reply fr">回复</a>
                 <from class="reply_form fl">
-                    <textarea  class="reply_input"></textarea>
+                    <textarea class="reply_input"></textarea>
                     <input type="submit" name="" value="回复" class="reply_sub fr">
                     <input type="reset" name="" value="取消" class="reply_cancel fr">
                 </from>
@@ -117,7 +128,7 @@
                 <a href="javascript:" class="comment_up fr">赞</a>
                 <a href="javascript:" class="comment_reply fr">回复</a>
                 <from class="reply_form fl">
-                    <textarea  class="reply_input"></textarea>
+                    <textarea class="reply_input"></textarea>
                     <input type="submit" name="" value="回复" class="reply_sub fr">
                     <input type="reset" name="" value="取消" class="reply_cancel fr">
                 </from>
@@ -125,28 +136,28 @@
         </div>
 
 
-        </div>
+    </div>
 {% endblock %}
 {% block sort %}
     <div class="rank_con fr">
-            <div class="author_card">
-                <a href="#" class="author_pic"><img src="../../static/news/images/user_pic.png" alt="author_pic"></a>
-                <a href="#" class="author_name">张大山</a>
-                <div class="author_resume">张大山的简介,张大山</div>
-                <div class="writings"><span>总篇数</span><b>23</b></div>
-                <div class="follows"><span>粉丝</span><b>36</b></div>
-                <a href="javascript:" class="focus fr">关注</a>
-                <a href="javascript:" class="focused fr"><span class="out">已关注</span><span class="over">取消关注</span></a>
-            </div>
-            <div class="rank_title">
-                <h3>点击排行</h3>
-            </div>
-            <ul class="rank_list">
-                {% for news in news_list %}
+        <div class="author_card">
+            <a href="#" class="author_pic"><img src="../../static/news/images/user_pic.png" alt="author_pic"></a>
+            <a href="#" class="author_name">张大山</a>
+            <div class="author_resume">张大山的简介,张大山</div>
+            <div class="writings"><span>总篇数</span><b>23</b></div>
+            <div class="follows"><span>粉丝</span><b>36</b></div>
+            <a href="javascript:" class="focus fr">关注</a>
+            <a href="javascript:" class="focused fr"><span class="out">已关注</span><span class="over">取消关注</span></a>
+        </div>
+        <div class="rank_title">
+            <h3>点击排行</h3>
+        </div>
+        <ul class="rank_list">
+            {% for news in news_list %}
                 <li><span
                         class="{% if loop.index == 1 %}first{% elif loop.index == 2 %}second{% elif loop.index == 3 %}third{% endif %}">{{ loop.index }}</span><a
                         href="#">{{ news.title }}</a></li>
             {% endfor %}
-            </ul>
-        </div>
+        </ul>
+    </div>
 {% endblock %}

@@ -12,6 +12,7 @@ import random
 from info.utils.yuntongxun.sms import CCP
 from info.models import User
 import datetime
+from flask.ext.login import logout_user, login_required
 
 
 @passport_blu.route('/sms_code', methods=['POST'])
@@ -146,6 +147,7 @@ def login():
 
 
 @passport_blu.route('/logout')
+@login_required
 def logout():
     """
     退出
@@ -153,6 +155,7 @@ def logout():
     session.pop('user_id', None)
     session.pop('mobile', None)
     session.pop('nick_name', None)
+
     return redirect(url_for('index.index'))
 
 

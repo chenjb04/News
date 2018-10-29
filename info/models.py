@@ -1,7 +1,9 @@
 from datetime import datetime
+
+from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 
-from info import constants
+from info import constants, login_manager
 from . import db
 
 
@@ -26,7 +28,7 @@ tb_user_follows = db.Table(
 )
 
 
-class User(BaseModel, db.Model):
+class User(BaseModel, db.Model, UserMixin):
     """用户"""
     __tablename__ = "info_user"
 
@@ -91,6 +93,11 @@ class User(BaseModel, db.Model):
             "last_login": self.last_login.strftime("%Y-%m-%d %H:%M:%S"),
         }
         return resp_dict
+
+
+@login_manager.user_loader
+def user_loader(uid):
+    return User.query.get(int(uid))
 
 
 class News(BaseModel, db.Model):

@@ -10,9 +10,11 @@ from flask_session import Session
 import logging
 from logging.handlers import RotatingFileHandler
 from flask.ext.wtf.csrf import generate_csrf
+from flask_login import LoginManager
 
 
 db = SQLAlchemy()
+login_manager = LoginManager()
 redis_store = None  # type:StrictRedis
 
 
@@ -39,7 +41,7 @@ def create_app(config_name):
 
     # 初始化数据库, 通过app初始化
     db.init_app(app)
-
+    login_manager.init_app(app)
     # 初始化redis存储对象
     global redis_store
     redis_store = StrictRedis(host=config[config_name].REDIS_HOST,
