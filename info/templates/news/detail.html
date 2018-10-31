@@ -35,10 +35,7 @@
             <form action="" class="comment_form" data-newsid="{{ news.id }}">
                 <div class="person_pic">
 
-                    <img src="{% if data.user.avatar_url %}
-                         {{ data.user.avatar_url }}
-                         {% else %}
-                         ../../static/news/images/person01.png"{% endif %}alt="用户图标">
+                    <img src="{% if data.user.avatar_url %}{{ data.user.avatar_url }}{% else %}../../static/news/images/person01.png{% endif %}" alt="用户图标">
                 </div>
                 <textarea placeholder="请发表您的评论" class="comment_input"></textarea>
                 <input type="submit" name="" value="评 论" class="comment_sub">
@@ -61,9 +58,7 @@
             {% for comment in comments %}
                 <div class="comment_list">
                     <div class="person_pic fl">
-                        <img src="
-                                {% if comment.user.avatar_url %}{{ comment.user.avatar_url }}{% else %}../../static/news/images/person01.png{% endif %}"
-                             alt="用户图标">
+                        <img src="{% if comment.user.avatar_url %}{{ comment.user.avatar_url }}{% else %}../../static/news/images/person01.png{% endif %}" alt="用户图标">
                     </div>
                     <div class="user_name fl">{{ comment.user.nick_name }}</div>
                     <div class="comment_text fl">
