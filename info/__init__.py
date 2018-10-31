@@ -1,7 +1,7 @@
 # -*- coding:utf-8 -*-
 __author__ = 'ChenJiaBao'
 __date__ = '2018/9/20 13:48'
-from flask import Flask
+from flask import Flask, render_template
 from config import config
 from flask_sqlalchemy import SQLAlchemy
 from redis import StrictRedis
@@ -54,6 +54,10 @@ def create_app(config_name):
 
     # 设置session保存位置
     Session(app)
+
+    @app.errorhandler(404)
+    def page_not_found(error):
+        return render_template('news/404.html')
 
     @app.after_request
     def after_request(response):
