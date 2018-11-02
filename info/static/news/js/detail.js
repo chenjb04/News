@@ -99,6 +99,10 @@ $(function () {
             data: JSON.stringify(params),
             success: function (resp) {
                 if (resp.errno == '0') {
+                    var like_count = $(this).attr('data-likecount');
+                    if (like_count == undefined){
+                        like_count = 0
+                    }
                     var comment = resp.data;
                     // 拼接内容
                     var comment_html = '';
@@ -176,6 +180,7 @@ $(function () {
                 data: JSON.stringify(params),
                 success: function (resp) {
                     if (resp.errno == "0") {
+
                         // 更新点赞按钮图标
                         if (action == "add") {
                             // 代表是点赞
@@ -225,6 +230,10 @@ $(function () {
                 data: JSON.stringify(params),
                 success: function (resp) {
                     if (resp.errno == "0") {
+                          var like_count = $(this).attr('data-likecount');
+                    if (like_count == undefined){
+                        like_count = 0
+                    }
                         var comment = resp.data;
                         // 拼接内容
                         var comment_html = "";
