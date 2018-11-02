@@ -7,7 +7,7 @@ from info.utils.common import user_login_data
 from info.utils.response_code import RET
 from info.utils.image_storage import storage
 from info.constants import QINIU_DOMIN_PREFIX
-from info.models import Category, News
+from info.models import Category, News, User
 from info import db
 
 
@@ -186,3 +186,92 @@ def user_news_list():
     total_page = paginate.pages
     return render_template('news/user_news_list.html', paginate=paginate, current_page=current_page, total_page=total_page)
 
+
+@profile_blu.route('/user_follow')
+@user_login_data
+def user_follow():
+    """
+    用户收藏
+    :return:
+    """
+    page = request.args.get('p', 1)
+    try:
+        page = int(page)
+    except Exception as e:
+        current_app.logger.error(e)
+        page = 1
+    user = g.user
+    pagination = user.followed.paginate(page, 4, False)
+    total_news_count = user.news_list.filter(News.status == 0).count()
+    followers_count = user.followers.count()
+    return render_template('news/user_follow.html', paginate=pagination,
+                           total_news_count=total_news_count,
+                           followers_count=followers_count
+                           )
+
+
+@profile_blu.route('/other')
+@user_login_data
+def other():
+    """
+    其他用户
+    :return:
+    """
+    user = g.user
+    data = {
+        'user': user
+    }
+    other_user_id = request.args.get('user_id')
+    other_user = User.query.get(other_user_id)
+    is_followed = False
+    if g.user:
+        if other_user.followers.filter(User.id == user.id).count() > 0:
+            is_followed = True
+    return render_template('news/other.html', data=data, other_user=other_user, is_followed=is_followed)
+
+
+@profile_blu.route('/other_news_list')
+def other_news_list():
+    """
+    其他用户新闻列表
+    :return:
+    """
+    # 获取页数
+    p = request.args.get("p", 1)
+    user_id = request.args.get("user_id")
+    try:
+        p = int(p)
+    except Exception as e:
+        current_app.logger.error(e)
+        return jsonify(errno=RET.PARAMERR, errmsg="参数错误")
+
+    if not all([p, user_id]):
+        return jsonify(errno=RET.PARAMERR, errmsg="参数错误")
+
+    try:
+        user = User.query.get(user_id)
+    except Exception as e:
+        current_app.logger.error(e)
+        return jsonify(errno=RET.DBERR, errmsg="数据查询错误")
+
+    if not user:
+        return jsonify(errno=RET.NODATA, errmsg="用户不存在")
+
+    try:
+        paginate = News.query.filter(News.user_id == user.id, News.status == 0).paginate(p, 1, False)
+        # 获取当前页数据
+        news_li = paginate.items
+        # 获取当前页
+        current_page = paginate.page
+        # 获取总页数
+        total_page = paginate.pages
+    except Exception as e:
+        current_app.logger.error(e)
+        return jsonify(errno=RET.DBERR, errmsg="数据查询错误")
+
+    news_dict_li = []
+
+    for news_item in news_li:
+        news_dict_li.append(news_item.to_review_dict())
+    data = {"news_list": news_dict_li, "total_page": total_page, "current_page": current_page}
+    return jsonify(errno=RET.OK, errmsg="OK", data=data)

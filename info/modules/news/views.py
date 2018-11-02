@@ -47,10 +47,25 @@ def news_detail(news_id):
         if item.id in comment_like_ids:
             comment_dict['is_like'] = True
         comment_list.append(comment_dict)
+    author = None
+    total_news_count = 0
+    followers = 0
+    is_followed = False
+    if news.user_id:
+        author = User.query.get(news.user_id)
+        total_news_count = author.news_list.filter(News.status == 0).count()
+        followers = author.followers.count()
+        if author and user:
+            if author.followers.filter(User.id == g.user.id).count() > 0:
+                is_followed = True
 
     return render_template('news/detail.html', news=news, data=data, news_list=news_list, total_comment=total_comment,
                            is_collected=is_collected,
-                           comments=comment_list)
+                           comments=comment_list,
+                           author=author,
+                           total_news_count=total_news_count,
+                           followers=followers,
+                           is_followed=is_followed)
 
 
 @news_blu.route('/news_collect', methods=['POST'])
@@ -176,3 +191,45 @@ def comment_like():
 
     return jsonify(errno=RET.OK, errmsg='操作成功')
 
+
+@news_blu.route('/followed_user', methods=['POST', 'GET'])
+@user_login_data
+def followed_user():
+    """
+    用户关注和取消关注
+    :return:
+    """
+    if not g.user:
+        return jsonify(errno=RET.SESSIONERR, errmsg="用户未登录")
+
+    user_id = request.json.get("user_id")
+    action = request.json.get("action")
+    if not all([user_id, action]):
+        return jsonify(errno=RET.PARAMERR, errmsg="参数错误")
+
+    if action not in ("follow", "unfollow"):
+        return jsonify(errno=RET.PARAMERR, errmsg="参数错误")
+
+    try:
+        target_user = User.query.get(user_id)
+    except Exception as e:
+        current_app.logger.error(e)
+        return jsonify(errno=RET.DBERR, errmsg="查询数据库失败")
+
+    if not target_user:
+        return jsonify(errno=RET.NODATA, errmsg="未查询到用户数据")
+
+    if action == "follow":
+        if target_user.followers.filter(User.id == g.user.id).count() > 0:
+            return jsonify(errno=RET.DATAEXIST, errmsg="当前已关注")
+        target_user.followers.append(g.user)
+    else:
+        if target_user.followers.filter(User.id == g.user.id).count() > 0:
+            target_user.followers.remove(g.user)
+    try:
+        db.session.commit()
+    except Exception as e:
+        current_app.logger.error(e)
+        return jsonify(errno=RET.DBERR, errmsg="数据保存错误")
+
+    return jsonify(errno=RET.OK, errmsg="操作成功")
